@@ -399,25 +399,28 @@ router.post('/chat-process', [auth, limiter], async (req, res) => {
       if (regenerate && message.options.messageId) {
         const previousResponse = message.previousResponse || []
         previousResponse.push({ response: message.response, options: message.options })
-        await updateChat(message._id as unknown as string,
+         updateChat(message._id as unknown as string,
           result.data.text,
           result.data.id,
           result.data.detail?.usage as UsageResponse,
           previousResponse)
       }
       else {
-        await updateChat(message._id as unknown as string,
+         updateChat(message._id as unknown as string,
           result.data.text,
           result.data.id,
           result.data.detail?.usage as UsageResponse)
       }
 
       if (result.data.detail?.usage) {
-        await insertChatUsage(req.headers.userId as string,
-          roomId,
-          message._id,
-          result.data.id,
-          result.data.detail?.usage as UsageResponse)
+				let usage1 = result.data.detail?.usage as UsageResponse;
+				if(usage1.total_tokens>1000){
+					await insertChatUsage(req.headers.userId as string,
+						roomId,
+						message._id,
+						result.data.id,
+						result.data.detail?.usage as UsageResponse)
+				}
       }
     }
     catch (error) {
