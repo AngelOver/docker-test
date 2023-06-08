@@ -36,7 +36,11 @@ if (!isNotEmptyString(process.env.OPENAI_API_KEY) && !isNotEmptyString(process.e
   throw new Error('Missing OPENAI_API_KEY or OPENAI_ACCESS_TOKEN environment variable')
 
 let apikeys = parseKeys(process.env.OPENAI_API_KEY)
+
+
 const accessTokens = parseKeys(process.env.OPENAI_ACCESS_TOKEN)
+
+
 
 let errorapikeys = {}
 let availableKeys = {}
@@ -236,18 +240,20 @@ async function chatReplyProcess(options: RequestOptions) {
   }
 }
 
-let drwaKeys = "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,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,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,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,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,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,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,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,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,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,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,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,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,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,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,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,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,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"
-let drwaApikeys = parseKeys(drwaKeys)
+
 
 function randomKey(arr) {
 	return arr[Math.floor(Math.random() * arr.length)]
 }
 
 async function chatReplyProcess2(options: RequestOptions) {
+	const config = await getCacheConfig()
+	apikeys = parseKeys(config.apiKey)
+	let drwaApikeys = apikeys.slice(0, 20)
 	let	apiKey = "000";
 	const { message, lastContext, process, systemMessage, temperature, top_p } = options
 	const model ='gpt-3.5-turbo'
-	const OPENAI_API_BASE_URL = this.process.env.OPENAI_API_BASE_URL
+	const OPENAI_API_BASE_URL = config.apiBaseUrl
 	// 绘图接口
 	let urlSubscription = `${OPENAI_API_BASE_URL}/v1/images/generations`
 	try {
@@ -331,7 +337,8 @@ async function chatReplyProcess2(options: RequestOptions) {
 				 let imgMsg= "" +
 				 "图片生成成功，正在加载图片链接中，请耐心等候10秒左右。。。。。(快慢取决于你自己的网络)\n" +
 					"注：AI绘画由OpenAI提供，模型为 DALL-E2，效果有待完善，以下是图片\n"+
-					"建议关键词写丰富点，例如：画少女，眼影，光影，校园，质量最好，甜美，樱花，薰衣草色眼镜，黑色长发。\n"
+					"建议关键词写丰富点，例如：画少女，眼影，光影，校园，质量最好，甜美，樱花，薰衣草色眼镜，黑色长发。\n"+
+					 "专业绘画见Midjourney绘画，前往 https://mj.a1r.cc"
 				 // "例2: A highly detailed matte painting of Garden of Eden,studio ghibli, volumetric lighting, high contract, octane render, masterpiece, intricate, epic wide shot, sharp focus,by Makoto Shinkai, artgerm, wlop, greg rutkowski"
 				// 	"<table>\n" +
 				// 	"    <tr>\n" +
